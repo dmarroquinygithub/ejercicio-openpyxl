@@ -2,7 +2,6 @@ import openpyxl
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 
-# Función para crear o cargar el archivo Excel
 def cargar_o_crear_excel(nombre_archivo):
     try:
         libro = openpyxl.load_workbook(nombre_archivo)
@@ -14,7 +13,6 @@ def cargar_o_crear_excel(nombre_archivo):
         libro.save(nombre_archivo)
     return libro
 
-# Función para ingresar datos de gastos
 def ingresar_gastos():
     lista_gastos = []
     while True:
@@ -26,13 +24,12 @@ def ingresar_gastos():
             print("Monto inválido. Debe ser un número.")
             continue
         lista_gastos.append((fecha, descripcion, monto))
-        
+
         agregar_mas = input("¿Desea agregar otro gasto? (s/n): ").lower()
         if agregar_mas != 's':
             break
     return lista_gastos
 
-# Función para guardar los datos en el archivo Excel
 def guardar_gastos_en_excel(gastos, nombre_archivo):
     libro = cargar_o_crear_excel(nombre_archivo)
     hoja = libro["Gastos"]
@@ -42,7 +39,6 @@ def guardar_gastos_en_excel(gastos, nombre_archivo):
     
     libro.save(nombre_archivo)
 
-# Función para generar el resumen de los gastos
 def generar_resumen(gastos):
     total_gastos = len(gastos)
     gasto_mas_caro = max(gastos, key=lambda x: x[2])
@@ -55,7 +51,6 @@ def generar_resumen(gastos):
     print(f"Gasto más barato: {gasto_mas_barato[1]} el {gasto_mas_barato[0]} por {gasto_mas_barato[2]}")
     print(f"Monto total de gastos: {monto_total}")
 
-# Función principal
 def main():
     nombre_archivo = "informe_gastos.xlsx"
     print("Bienvenido al programa de gestión de gastos personales.")
