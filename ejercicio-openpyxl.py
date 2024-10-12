@@ -1,0 +1,68 @@
+import openpyxl
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
+# Función para crear o cargar el archivo Excel
+def cargar_o_crear_excel(nombre_archivo):
+    try:
+        libro = openpyxl.load_workbook(nombre_archivo)
+    except FileNotFoundError:
+        libro = Workbook()
+        hoja = libro.active
+        hoja.title = "Gastos"
+        hoja.append(["Fecha", "Descripción", "Monto"])
+        libro.save(nombre_archivo)
+    return libro
+
+# Función para ingresar datos de gastos
+def ingresar_gastos():
+    lista_gastos = []
+    while True:
+        fecha = input("Ingrese la fecha del gasto (YYYY-MM-DD): ")
+        descripcion = input("Ingrese la descripción del gasto: ")
+        try:
+            monto = float(input("Ingrese el monto del gasto: "))
+        except ValueError:
+            print("Monto inválido. Debe ser un número.")
+            continue
+        lista_gastos.append((fecha, descripcion, monto))
+        
+        agregar_mas = input("¿Desea agregar otro gasto? (s/n): ").lower()
+        if agregar_mas != 's':
+            break
+    return lista_gastos
+
+# Función para guardar los datos en el archivo Excel
+def guardar_gastos_en_excel(gastos, nombre_archivo):
+    libro = cargar_o_crear_excel(nombre_archivo)
+    hoja = libro["Gastos"]
+    
+    for gasto in gastos:
+        hoja.append(gasto)
+    
+    libro.save(nombre_archivo)
+
+# Función para generar el resumen de los gastos
+def generar_resumen(gastos):
+    total_gastos = len(gastos)
+    gasto_mas_caro = max(gastos, key=lambda x: x[2])
+    gasto_mas_barato = min(gastos, key=lambda x: x[2])
+    monto_total = sum(gasto[2] for gasto in gastos)
+    
+    print("\nResumen de Gastos:")
+    print(f"Total de gastos: {total_gastos}")
+    print(f"Gasto más caro: {gasto_mas_caro[1]} el {gasto_mas_caro[0]} por {gasto_mas_caro[2]}")
+    print(f"Gasto más barato: {gasto_mas_barato[1]} el {gasto_mas_barato[0]} por {gasto_mas_barato[2]}")
+    print(f"Monto total de gastos: {monto_total}")
+
+# Función principal
+def main():
+    nombre_archivo = "informe_gastos.xlsx"
+    print("Bienvenido al programa de gestión de gastos personales.")
+    gastos = ingresar_gastos()
+    guardar_gastos_en_excel(gastos, nombre_archivo)
+    generar_resumen(gastos)
+    print(f"\nLos datos de los gastos se han guardado en el archivo {nombre_archivo}.")
+
+if __name__ == "__main__":
+    main()
